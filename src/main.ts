@@ -12,7 +12,7 @@ async function bootstrap() {
   const PORT = configSerive.get('PORT');
   app.enableCors();
 
-  await app.listen(PORT ?? '3000', '0.0.0.0');
+  await app.listen(PORT ?? '5000', '0.0.0.0');
 
   console.log(`MongodbURI : ${configSerive.get('MONGODB_URI')}`);
 

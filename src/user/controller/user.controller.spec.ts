@@ -1,22 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BookController } from './book.controller';
-import { BookService } from '../service/book.service';
-import { Book } from '../schema/book.schema';
+import { UserController } from './user.controller';
+import { UserService } from '../service/user.service';
+import { User } from '../schema/user.schema';
 import { getModelToken } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateBookDto } from '../dto/create-book.dto';
-import { UpdateBookDto } from '../dto/update-book.dto';
+import { CreateUserDto } from '../dto/create-user.dto';
 
-describe('BookController', () => {
-  let controller: BookController;
-  let service: BookService;
+describe('UserController', () => {
+  let controller: UserController;
+  let service: UserService;
 
   const mockBook = {
     _id: '6579a986047092e6d7c1ae69',
     name: 'Test',
-    price: 200,
-    description: 'Description',
-    author: 'Author',
     createdAt: '2023-12-13T12:54:30.252Z',
     updatedAt: '2023-12-13T12:54:30.252Z',
     __v: 0,
@@ -32,17 +28,17 @@ describe('BookController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [BookController],
+      controllers: [UserController],
       providers: [
         {
-          provide: BookService,
+          provide: UserService,
           useValue: mockBookService,
         },
       ],
     }).compile();
 
-    controller = module.get<BookController>(BookController);
-    service = module.get<BookService>(BookService);
+    controller = module.get<UserController>(UserController);
+    service = module.get<UserService>(UserService);
   });
 
   it('should be defined', () => {
@@ -69,7 +65,7 @@ describe('BookController', () => {
 
       mockBookService.create = jest.fn().mockResolvedValueOnce(mockBook);
 
-      const result = await controller.create(newBook as CreateBookDto);
+      const result = await controller.create(newBook as CreateUserDto);
 
       expect(service.create).toHaveBeenCalled();
       expect(result).toEqual(mockBook);
@@ -82,23 +78,6 @@ describe('BookController', () => {
 
       expect(service.findOne).toHaveBeenCalled();
       expect(result).toEqual(mockBook);
-    });
-  });
-
-  describe('updateBook', () => {
-    it('should update book by ID', async () => {
-      const updatedBook = { ...mockBook, name: 'Updated name' };
-      const book = { name: 'Updated name' };
-
-      service.update = jest.fn().mockResolvedValueOnce(updatedBook);
-
-      const result = await controller.update(
-        mockBook._id,
-        book as UpdateBookDto,
-      );
-
-      expect(service.update).toHaveBeenCalled();
-      expect(result).toEqual(updatedBook);
     });
   });
 

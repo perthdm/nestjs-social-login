@@ -1,21 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BookService } from './book.service';
+import { UserService } from './user.service';
 import { getModelToken } from '@nestjs/mongoose';
-import { Book } from '../schema/book.schema';
+import { User } from '../schema/user.schema';
 import mongoose, { Model } from 'mongoose';
 import { BadRequestException } from '@nestjs/common';
-import { CreateBookDto } from '../dto/create-book.dto';
+import { CreateUserDto } from '../dto/create-user.dto';
 
-describe('BookService', () => {
-  let service: BookService;
-  let model: Model<Book>;
+describe('UserService', () => {
+  let service: UserService;
+  let model: Model<User>;
 
   const mockBook = {
     _id: '6579a986047092e6d7c1ae69',
     name: 'Test',
-    price: 200,
-    description: 'Description',
-    author: 'Author',
     createdAt: '2023-12-13T12:54:30.252Z',
     updatedAt: '2023-12-13T12:54:30.252Z',
     __v: 0,
@@ -32,16 +29,16 @@ describe('BookService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        BookService,
+        UserService,
         {
-          provide: getModelToken(Book.name),
+          provide: getModelToken(User.name),
           useValue: mockBookService,
         },
       ],
     }).compile();
 
-    service = module.get<BookService>(BookService);
-    model = module.get<Model<Book>>(getModelToken(Book.name));
+    service = module.get<UserService>(UserService);
+    model = module.get<Model<User>>(getModelToken(User.name));
   });
 
   describe('findOne', () => {
@@ -89,30 +86,9 @@ describe('BookService', () => {
         .spyOn(service, 'create')
         .mockImplementationOnce(() => Promise.resolve(mockBook));
 
-      const result = await service.create(newBook as CreateBookDto);
+      const result = await service.create(newBook as CreateUserDto);
 
       expect(result).toEqual(mockBook);
-    });
-  });
-
-  describe('update', () => {
-    it('should update and return a book', async () => {
-      const updatedBook = {
-        ...mockBook,
-        name: 'Updated name',
-      };
-      const book = { name: 'Updated name' };
-
-      jest.spyOn(model, 'findByIdAndUpdate').mockResolvedValue(updatedBook);
-
-      const result = await service.update(mockBook._id, book as any);
-
-      expect(model.findByIdAndUpdate).toHaveBeenCalledWith(mockBook._id, book, {
-        new: true,
-        runValidators: true,
-      });
-
-      expect(result.name).toEqual(book.name);
     });
   });
 
